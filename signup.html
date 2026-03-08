@@ -150,49 +150,64 @@ function codeBack(e, idx) {
 
 async function verifyCode() {
   const inputs = document.querySelectorAll('.code-input');
-  // Fix 1: trim each digit, join as clean string
   const code = Array.from(inputs).map(i => i.value.trim()).join('');
-  if(code.length < 6) {
-    showAlert('Iltimos, to\'liq 6 raqamli kodni kiriting', 'error', 'alert-box-verify');
+
+  if(code.length < 6 || !/^\d{6}$/.test(code)) {
+    showAlert("Iltimos, to'liq 6 raqamli kodni kiriting", 'error', 'alert-box-verify');
     return;
   }
 
-  const btn = document.getElementById('verify-btn');
+  if(!currentEmail) {
+    showAlert("Email aniqlanmadi. Sahifani yangilang.", 'error', 'alert-box-verify');
+    return;
+  }
+
+  const btn     = document.getElementById('verify-btn');
   const btnText = document.getElementById('verify-btn-text');
-  btn.disabled = true;
+  btn.disabled  = true;
   btnText.textContent = 'Tekshirilmoqda...';
+
+  // Build form body explicitly — no template literals to avoid encoding bugs
+  const body = [
+    'action=verify_email',
+    'email=' + encodeURIComponent(currentEmail.trim().toLowerCase()),
+    'code='  + encodeURIComponent(code)
+  ].join('&');
 
   try {
     const res = await fetch('index.php', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-      // Fix 2: send email as lowercase to match PHP strtolower()
-      body: `action=verify_email&email=${encodeURIComponent(currentEmail.trim().toLowerCase())}&code=${encodeURIComponent(code)}`
+      method:  'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body:    body
     });
 
-    // Fix 3: read raw text first — if PHP returns HTML error, show it clearly
+    // Read as text first — catch cases where PHP returns HTML instead of JSON
     const text = await res.text();
+
     let data;
     try {
       data = JSON.parse(text);
-    } catch(parseErr) {
-      // PHP returned HTML instead of JSON — show raw error for debugging
-      showAlert('Server xatosi: ' + text.substring(0, 120), 'error', 'alert-box-verify');
+    } catch(_) {
+      // PHP returned HTML (parse error, redirect, etc.) — show raw snippet
+      const snippet = text.replace(/<[^>]+>/g, ' ').trim().substring(0, 150);
+      showAlert('Server xatosi: ' + snippet, 'error', 'alert-box-verify');
       btn.disabled = false;
       btnText.textContent = 'Tasdiqlash';
       return;
     }
 
     if(data.success) {
-      showAlert('Email tasdiqlandi! Yo\'naltirilmoqda...', 'success', 'alert-box-verify');
-      setTimeout(() => { window.location.href = 'index.php'; }, 1200);
+      showAlert("Email tasdiqlandi! Yo'naltirilmoqda...", 'success', 'alert-box-verify');
+      setTimeout(() => { window.location.href = 'index.php'; }, 1000);
     } else {
-      showAlert(data.message || 'Noto\'g\'ri kod', 'error', 'alert-box-verify');
+      showAlert(data.message || "Noto'g'ri kod", 'error', 'alert-box-verify');
       btn.disabled = false;
       btnText.textContent = 'Tasdiqlash';
     }
-  } catch(err) {
-    showAlert('Tarmoq xatosi: ' + err.message, 'error', 'alert-box-verify');
+
+  } catch(networkErr) {
+    // True network failure — no response at all
+    showAlert('Tarmoq xatosi: ' + networkErr.message, 'error', 'alert-box-verify');
     btn.disabled = false;
     btnText.textContent = 'Tasdiqlash';
   }
