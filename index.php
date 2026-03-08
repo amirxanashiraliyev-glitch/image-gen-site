@@ -9,33 +9,41 @@ define('ADMIN_EMAIL', getenv('ADMIN_EMAIL'));
 define('RESEND_KEY',  getenv('RESEND_API_KEY'));
 define('FROM_EMAIL',  getenv('FROM_EMAIL'));   // masalan: noreply@yoursite.com
 
-// ─── DB CONNECTION (PostgreSQL) ────────────────────────────────────────────
+// ─── DB CONNECTION (PostgreSQL — Render) ──────────────────────────────────
 function getDB(): PDO {
     static $pdo = null;
-    if($pdo) return $pdo;
-    // Render DATABASE_URL ni ham qo'llab-quvvatlash
-    $dsn = getenv('DATABASE_URL');
-    if($dsn) {
-        $parsed = parse_url($dsn);
-        $host   = $parsed['host'];
-        $port   = $parsed['port'] ?? 5432;
-        $dbname = ltrim($parsed['path'], '/');
-        $user   = $parsed['user'];
-        $pass   = $parsed['pass'];
-        $pdo = new PDO(
-            "pgsql:host=$host;port=$port;dbname=$dbname;sslmode=require",
-            $user, $pass,
-            [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC]
-        );
-    } else {
-        $pdo = new PDO(
-            "pgsql:host=".DB_HOST.";port=".(getenv('DB_PORT')?:'5432').";dbname=".DB_NAME.";sslmode=require",
-            DB_USER, DB_PASS,
-            [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC]
-        );
+    if ($pdo) return $pdo;
+
+    $url = getenv('DATABASE_URL');
+
+    if (!$url) {
+        throw new \RuntimeException('DATABASE_URL environment variable is not set.');
     }
+
+    $parsed = parse_url($url);
+
+    if (!$parsed || empty($parsed['host'])) {
+        throw new \RuntimeException('DATABASE_URL could not be parsed. Check its format.');
+    }
+
+    $host   = $parsed['host'];
+    $port   = isset($parsed['port']) ? (int)$parsed['port'] : 5432;
+    $dbname = isset($parsed['path']) ? ltrim($parsed['path'], '/') : '';
+    $user   = $parsed['user'] ?? '';
+    $pass   = $parsed['pass'] ?? '';
+
+    if (!$dbname) {
+        throw new \RuntimeException('DATABASE_URL does not contain a database name.');
+    }
+
+    $dsn = "pgsql:host={$host};port={$port};dbname={$dbname};sslmode=require";
+
+    $pdo = new PDO($dsn, $user, $pass, [
+        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        PDO::ATTR_PERSISTENT         => false,
+    ]);
+
     return $pdo;
 }
 
