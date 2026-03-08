@@ -248,48 +248,50 @@ if($action === 'resend_code') {
 // ── VERIFY EMAIL ───────────────────────────────────────────────────────────
 if($action === 'verify_email') {
     $email = strtolower(trim($_POST['email'] ?? ''));
-    // Fix: strip ALL whitespace including hidden chars from each digit
-    $code  = preg_replace('/\s+/', '', (string)($_POST['code'] ?? ''));
+    $code  = preg_replace('/[^0-9]/', '', (string)($_POST['code'] ?? ''));
 
-    if(!$email || strlen($code) !== 6 || !ctype_digit($code)) {
+    if(!$email || strlen($code) !== 6) {
         jsonOut(['success'=>false,'message'=>'Email yoki kod noto\'g\'ri format']);
     }
 
     $db = getDB();
 
-    // Fetch latest code for this email — no SQL code comparison (avoids type issues)
+    // Fetch latest verification code by email only — compare in PHP
     $stmt = $db->prepare(
-        "SELECT * FROM verification_codes
-         WHERE LOWER(TRIM(email)) = ?
+        "SELECT id, email, code, expires_at
+         FROM verification_codes
+         WHERE LOWER(email) = ?
          ORDER BY id DESC LIMIT 1"
     );
     $stmt->execute([$email]);
     $vc = $stmt->fetch();
 
-    // All comparisons in PHP as strings
     if (!$vc) {
         jsonOut(['success'=>false,'message'=>'Tasdiqlash kodi topilmadi. Qayta yuborish tugmasini bosing.']);
     }
 
-    $dbCode  = preg_replace('/\s+/', '', (string)($vc['code'] ?? ''));
-    $expired = strtotime($vc['expires_at']) < time();
+    // Compare as plain strings in PHP — avoids any DB type casting issues
+    $dbCode = preg_replace('/[^0-9]/', '', (string)($vc['code'] ?? ''));
 
     if ($dbCode !== $code) {
         jsonOut(['success'=>false,'message'=>'Kod noto\'g\'ri. Tekshirib qayta kiriting.']);
     }
 
-    if ($expired) {
+    if (strtotime($vc['expires_at']) < time()) {
         jsonOut(['success'=>false,'message'=>'Kod muddati o\'tgan. Qayta yuborish tugmasini bosing.']);
     }
 
-    // Update verified status
-    $db->prepare("UPDATE users SET verified=1 WHERE LOWER(TRIM(email))=?")
-       ->execute([$email]);
-    $db->prepare("DELETE FROM verification_codes WHERE LOWER(TRIM(email))=?")
+    // Fix: use PDO::PARAM_INT to avoid SMALLINT type mismatch on PostgreSQL
+    $upd = $db->prepare("UPDATE users SET verified = :v WHERE LOWER(email) = :e");
+    $upd->bindValue(':v', 1, PDO::PARAM_INT);
+    $upd->bindValue(':e', $email, PDO::PARAM_STR);
+    $upd->execute();
+
+    $db->prepare("DELETE FROM verification_codes WHERE LOWER(email) = ?")
        ->execute([$email]);
 
-    // Load user and set session
-    $userStmt = $db->prepare("SELECT * FROM users WHERE LOWER(TRIM(email))=?");
+    // Load user and start session
+    $userStmt = $db->prepare("SELECT * FROM users WHERE LOWER(email) = ?");
     $userStmt->execute([$email]);
     $u = $userStmt->fetch();
 
