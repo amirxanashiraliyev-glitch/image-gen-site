@@ -247,27 +247,52 @@ if($action === 'resend_code') {
 
 // ── VERIFY EMAIL ───────────────────────────────────────────────────────────
 if($action === 'verify_email') {
-    $email = trim($_POST['email'] ?? '');
-    $code  = trim($_POST['code'] ?? '');
-    $db    = getDB();
-    $row   = $db->prepare("SELECT * FROM verification_codes WHERE email=? AND code=? AND expires_at > NOW()");
-    $row->execute([$email, $code]);
-    $vc = $row->fetch();
-    if(!$vc) jsonOut(['success'=>false,'message'=>'Kod noto\'g\'ri yoki muddati o\'tgan']);
+    // Fix 1: trim + lowercase email, trim + cast code to string
+    $email = strtolower(trim($_POST['email'] ?? ''));
+    $code  = trim((string)($_POST['code'] ?? ''));
 
-    $db->prepare("UPDATE users SET verified=1 WHERE email=?")->execute([$email]);
-    $db->prepare("DELETE FROM verification_codes WHERE email=?")->execute([$email]);
-
-    $user = $db->prepare("SELECT * FROM users WHERE email=?");
-    $user->execute([$email]);
-    $u = $user->fetch();
-    if($u) {
-        $_SESSION['user_id']    = $u['id'];
-        $_SESSION['email']      = $u['email'];
-        $_SESSION['user_uid']   = $u['user_uid'];
-        $_SESSION['daily_limit']= $u['daily_limit'];
-        $_SESSION['tokens']     = $u['tokens'];
+    if(!$email || strlen($code) !== 6) {
+        jsonOut(['success'=>false,'message'=>'Email yoki kod noto\'g\'ri']);
     }
+
+    $db = getDB();
+
+    // Fix 2: fetch only by email first, then compare code in PHP
+    // This avoids PostgreSQL type-casting issues with varchar vs int comparison
+    $row = $db->prepare(
+        "SELECT * FROM verification_codes
+         WHERE LOWER(email) = ?
+         ORDER BY id DESC LIMIT 1"
+    );
+    $row->execute([$email]);
+    $vc = $row->fetch();
+
+    // Fix 3: compare code as trimmed strings, check expiry in PHP
+    if (
+        !$vc ||
+        trim((string)$vc['code']) !== $code ||
+        strtotime($vc['expires_at']) < time()
+    ) {
+        jsonOut(['success'=>false,'message'=>'Kod noto\'g\'ri yoki muddati o\'tgan']);
+    }
+
+    // Mark verified
+    $db->prepare("UPDATE users SET verified=1 WHERE LOWER(email)=?")->execute([$email]);
+    $db->prepare("DELETE FROM verification_codes WHERE LOWER(email)=?")->execute([$email]);
+
+    // Start session
+    $userStmt = $db->prepare("SELECT * FROM users WHERE LOWER(email)=?");
+    $userStmt->execute([$email]);
+    $u = $userStmt->fetch();
+
+    if($u) {
+        $_SESSION['user_id']     = $u['id'];
+        $_SESSION['email']       = $u['email'];
+        $_SESSION['user_uid']    = $u['user_uid'];
+        $_SESSION['daily_limit'] = (int)($u['daily_limit'] ?? 8);
+        $_SESSION['tokens']      = (int)($u['tokens'] ?? 0);
+    }
+
     jsonOut(['success'=>true]);
 }
 
