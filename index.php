@@ -51,67 +51,65 @@ function getDB(): PDO {
 function initDB(): void {
     $db = getDB();
 
-    // ── users table
+    // ── 1. users jadvali — user_uid BILAn yaratiladi (yangi deployment)
     $db->exec("CREATE TABLE IF NOT EXISTS users (
         id          SERIAL PRIMARY KEY,
+        user_uid    VARCHAR(10),
         email       VARCHAR(255) NOT NULL UNIQUE,
         password    VARCHAR(255),
-        verified    SMALLINT DEFAULT 0,
-        google_user SMALLINT DEFAULT 0,
-        daily_limit INT DEFAULT 8,
-        tokens      INT DEFAULT 0,
-        last_reset  DATE DEFAULT NULL,
-        created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        verified    SMALLINT    DEFAULT 0,
+        google_user SMALLINT    DEFAULT 0,
+        daily_limit INT         DEFAULT 8,
+        tokens      INT         DEFAULT 0,
+        last_reset  DATE        DEFAULT NULL,
+        created_at  TIMESTAMP   DEFAULT CURRENT_TIMESTAMP
     )");
 
-    // ── Migration: add user_uid if missing (safe for existing deployments)
-    $db->exec("
-        DO \$\$
-        BEGIN
-            IF NOT EXISTS (
-                SELECT 1 FROM information_schema.columns
-                WHERE table_name = 'users' AND column_name = 'user_uid'
-            ) THEN
-                ALTER TABLE users ADD COLUMN user_uid VARCHAR(10);
-            END IF;
-        END
-        \$\$;
-    ");
+    // ── 2. Migration: user_uid kolonkasi yo'qligini tekshir va qo'sh
+    //    information_schema orqali — DO $$ bloksiz, Render da 100% ishlaydi
+    $colCheck = $db->query(
+        "SELECT COUNT(*) AS cnt FROM information_schema.columns
+         WHERE table_name = 'users' AND column_name = 'user_uid'"
+    )->fetch();
 
-    // ── Unique index on user_uid (safe — skips if already exists)
-    $db->exec("
-        DO \$\$
-        BEGIN
-            IF NOT EXISTS (
-                SELECT 1 FROM pg_indexes
-                WHERE tablename = 'users' AND indexname = 'idx_users_user_uid'
-            ) THEN
-                CREATE UNIQUE INDEX idx_users_user_uid ON users(user_uid)
-                WHERE user_uid IS NOT NULL;
-            END IF;
-        END
-        \$\$;
-    ");
+    if ((int)$colCheck['cnt'] === 0) {
+        $db->exec("ALTER TABLE users ADD COLUMN user_uid VARCHAR(10)");
+    }
 
-    // ── verification_codes table
+    // ── 3. Unique index — pg_indexes orqali tekshir, yo'q bo'lsa yarat
+    $idxCheck = $db->query(
+        "SELECT COUNT(*) AS cnt FROM pg_indexes
+         WHERE tablename = 'users' AND indexname = 'idx_users_user_uid'"
+    )->fetch();
+
+    if ((int)$idxCheck['cnt'] === 0) {
+        // NULL qiymatlar unique indexga xalaqit bermasligi uchun partial index
+        $db->exec(
+            "CREATE UNIQUE INDEX idx_users_user_uid
+             ON users(user_uid)
+             WHERE user_uid IS NOT NULL"
+        );
+    }
+
+    // ── 4. verification_codes jadvali
     $db->exec("CREATE TABLE IF NOT EXISTS verification_codes (
-        id         SERIAL PRIMARY KEY,
+        id         SERIAL      PRIMARY KEY,
         email      VARCHAR(255) NOT NULL,
         code       VARCHAR(10)  NOT NULL,
         expires_at TIMESTAMP    NOT NULL
     )");
 
-    // ── image_history table
+    // ── 5. image_history jadvali
     $db->exec("CREATE TABLE IF NOT EXISTS image_history (
-        id         SERIAL PRIMARY KEY,
-        user_id    INT  NOT NULL,
+        id         SERIAL      PRIMARY KEY,
+        user_id    INT         NOT NULL,
         user_uid   VARCHAR(10) NOT NULL,
-        prompt     TEXT NOT NULL,
-        image_url  TEXT NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        prompt     TEXT        NOT NULL,
+        image_url  TEXT        NOT NULL,
+        created_at TIMESTAMP   DEFAULT CURRENT_TIMESTAMP
     )");
 
-    // ── Indexes (idempotent)
+    // ── 6. Qo'shimcha indexlar (idempotent)
     $db->exec("CREATE INDEX IF NOT EXISTS idx_verif_email     ON verification_codes(email)");
     $db->exec("CREATE INDEX IF NOT EXISTS idx_history_user_id ON image_history(user_id)");
     $db->exec("CREATE INDEX IF NOT EXISTS idx_history_uid     ON image_history(user_uid)");
