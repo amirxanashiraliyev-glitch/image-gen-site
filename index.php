@@ -317,9 +317,21 @@ if($action === 'save_image') {
 }
 
 // ─── AUTH GUARD ────────────────────────────────────────────────────────────
-if(!isset($_SESSION['user_id'])) {
-    header('Location: login.html');
-    exit;
+// API action bo'lsa redirect qilma — faqat brauzerdan kirish bo'lsa redirect
+$publicActions = ['register', 'login', 'resend_code', 'verify_email', 'google_auth', 'logout'];
+
+if (!isset($_SESSION['user_id'])) {
+    if ($action !== '') {
+        // API request — session yo'q, lekin public action emas
+        if (!in_array($action, $publicActions)) {
+            jsonOut(['success' => false, 'message' => 'Autentifikatsiya kerak', 'redirect' => 'login.html']);
+        }
+        // public actions (register, login, verify_email...) — davom etsin
+    } else {
+        // Brauzerdan to'g'ridan sahifaga kirish — login ga yo'naltir
+        header('Location: login.html');
+        exit;
+    }
 }
 
 // ─── LOAD USER DATA ────────────────────────────────────────────────────────
