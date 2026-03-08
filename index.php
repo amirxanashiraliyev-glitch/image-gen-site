@@ -247,48 +247,56 @@ if($action === 'resend_code') {
 
 // ── VERIFY EMAIL ───────────────────────────────────────────────────────────
 if($action === 'verify_email') {
-    // Fix 1: trim + lowercase email, trim + cast code to string
     $email = strtolower(trim($_POST['email'] ?? ''));
-    $code  = trim((string)($_POST['code'] ?? ''));
+    // Fix: strip ALL whitespace including hidden chars from each digit
+    $code  = preg_replace('/\s+/', '', (string)($_POST['code'] ?? ''));
 
-    if(!$email || strlen($code) !== 6) {
-        jsonOut(['success'=>false,'message'=>'Email yoki kod noto\'g\'ri']);
+    if(!$email || strlen($code) !== 6 || !ctype_digit($code)) {
+        jsonOut(['success'=>false,'message'=>'Email yoki kod noto'g'ri format']);
     }
 
     $db = getDB();
 
-    // Fix 2: fetch only by email first, then compare code in PHP
-    // This avoids PostgreSQL type-casting issues with varchar vs int comparison
-    $row = $db->prepare(
+    // Fetch latest code for this email — no SQL code comparison (avoids type issues)
+    $stmt = $db->prepare(
         "SELECT * FROM verification_codes
-         WHERE LOWER(email) = ?
+         WHERE LOWER(TRIM(email)) = ?
          ORDER BY id DESC LIMIT 1"
     );
-    $row->execute([$email]);
-    $vc = $row->fetch();
+    $stmt->execute([$email]);
+    $vc = $stmt->fetch();
 
-    // Fix 3: compare code as trimmed strings, check expiry in PHP
-    if (
-        !$vc ||
-        trim((string)$vc['code']) !== $code ||
-        strtotime($vc['expires_at']) < time()
-    ) {
-        jsonOut(['success'=>false,'message'=>'Kod noto\'g\'ri yoki muddati o\'tgan']);
+    // All comparisons in PHP as strings
+    if (!$vc) {
+        jsonOut(['success'=>false,'message'=>'Tasdiqlash kodi topilmadi. Qayta yuborish tugmasini bosing.']);
     }
 
-    // Mark verified
-    $db->prepare("UPDATE users SET verified=1 WHERE LOWER(email)=?")->execute([$email]);
-    $db->prepare("DELETE FROM verification_codes WHERE LOWER(email)=?")->execute([$email]);
+    $dbCode  = preg_replace('/\s+/', '', (string)($vc['code'] ?? ''));
+    $expired = strtotime($vc['expires_at']) < time();
 
-    // Start session
-    $userStmt = $db->prepare("SELECT * FROM users WHERE LOWER(email)=?");
+    if ($dbCode !== $code) {
+        jsonOut(['success'=>false,'message'=>'Kod noto'g'ri. Tekshirib qayta kiriting.']);
+    }
+
+    if ($expired) {
+        jsonOut(['success'=>false,'message'=>'Kod muddati o'tgan. Qayta yuborish tugmasini bosing.']);
+    }
+
+    // Update verified status
+    $db->prepare("UPDATE users SET verified=1 WHERE LOWER(TRIM(email))=?")
+       ->execute([$email]);
+    $db->prepare("DELETE FROM verification_codes WHERE LOWER(TRIM(email))=?")
+       ->execute([$email]);
+
+    // Load user and set session
+    $userStmt = $db->prepare("SELECT * FROM users WHERE LOWER(TRIM(email))=?");
     $userStmt->execute([$email]);
     $u = $userStmt->fetch();
 
     if($u) {
-        $_SESSION['user_id']     = $u['id'];
+        $_SESSION['user_id']     = (int)$u['id'];
         $_SESSION['email']       = $u['email'];
-        $_SESSION['user_uid']    = $u['user_uid'];
+        $_SESSION['user_uid']    = (string)($u['user_uid'] ?? '');
         $_SESSION['daily_limit'] = (int)($u['daily_limit'] ?? 8);
         $_SESSION['tokens']      = (int)($u['tokens'] ?? 0);
     }
