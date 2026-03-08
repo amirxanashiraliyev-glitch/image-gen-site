@@ -252,7 +252,7 @@ if($action === 'verify_email') {
     $code  = preg_replace('/\s+/', '', (string)($_POST['code'] ?? ''));
 
     if(!$email || strlen($code) !== 6 || !ctype_digit($code)) {
-        jsonOut(['success'=>false,'message'=>'Email yoki kod noto'g'ri format']);
+        jsonOut(['success'=>false,'message'=>"Email yoki kod notog'ri format");
     }
 
     $db = getDB();
@@ -279,7 +279,7 @@ if($action === 'verify_email') {
     }
 
     if ($expired) {
-        jsonOut(['success'=>false,'message'=>'Kod muddati o'tgan. Qayta yuborish tugmasini bosing.']);
+        jsonOut(['success'=>false,'message'=>"Kod muddati o'tgan. Qayta yuborish tugmasini bosing.']);
     }
 
     // Update verified status
@@ -398,7 +398,7 @@ if (!isset($_SESSION['user_id'])) {
     if ($action !== '') {
         // API request — session yo'q, lekin public action emas
         if (!in_array($action, $publicActions)) {
-            jsonOut(['success' => false, 'message' => 'Autentifikatsiya kerak', 'redirect' => 'login.html']);
+            jsonOut(['success' => false, 'message' => "Autentifikatsiya kerak", "redirect" => "login.html"]);
         }
         // public actions (register, login, verify_email...) — davom etsin
     } else {
