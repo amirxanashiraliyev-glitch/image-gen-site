@@ -328,7 +328,6 @@ if($action === 'login') {
     $_SESSION['email']      = $u['email'];
     $_SESSION['user_uid']   = $u['user_uid'];
     $_SESSION['daily_limit']= $u['daily_limit'];
-    $_SESSION['tokens']     = $u['tokens'];
     jsonOut(['success'=>true]);
 }
 
@@ -366,31 +365,24 @@ if($action === 'save_image') {
 
     checkAndResetLimit($u);
 
-    // Check limits
-    if($u['daily_limit'] <= 0 && $u['tokens'] <= 0) {
-        jsonOut(['success'=>false,'message'=>'Bugungi limit tugadi. Ertaga qayta urinib ko\'ring yoki token sotib oling.','limit_reached'=>true]);
+    // Check daily limit
+    if($u['daily_limit'] <= 0) {
+        jsonOut(['success'=>false,'message'=>'Bugungi limit tugadi. Ertaga qayta urinib ko\'ring.','limit_reached'=>true]);
     }
 
-    // Deduct
-    if($u['daily_limit'] > 0) {
-        $db->prepare("UPDATE users SET daily_limit=daily_limit-1 WHERE id=?")->execute([$u['id']]);
-        $_SESSION['daily_limit'] = $u['daily_limit'] - 1;
-    } else {
-        $db->prepare("UPDATE users SET tokens=tokens-1 WHERE id=?")->execute([$u['id']]);
-        $_SESSION['tokens'] = $u['tokens'] - 1;
-    }
+    // Deduct one from daily_limit
+    $db->prepare("UPDATE users SET daily_limit=daily_limit-1 WHERE id=?")->execute([$u['id']]);
 
-    // Save only prompt — image served via generate.php proxy (real URL hidden)
+    // Save to history
     $db->prepare("INSERT INTO image_history (user_id,user_uid,prompt,image_url) VALUES (?,?,?,?)")
        ->execute([$u['id'], $u['user_uid'], $prompt, 'generate.php?prompt=' . urlencode($prompt)]);
 
-    $updated = $db->prepare("SELECT daily_limit, tokens FROM users WHERE id=?");
+    $updated = $db->prepare("SELECT daily_limit FROM users WHERE id=?");
     $updated->execute([$u['id']]);
     $upd = $updated->fetch();
-    $_SESSION['daily_limit'] = $upd['daily_limit'];
-    $_SESSION['tokens'] = $upd['tokens'];
+    $_SESSION['daily_limit'] = (int)$upd['daily_limit'];
 
-    jsonOut(['success'=>true,'daily_limit'=>$upd['daily_limit'],'tokens'=>$upd['tokens']]);
+    jsonOut(['success'=>true,'daily_limit'=>$upd['daily_limit']]);
 }
 
 // ─── AUTH GUARD ────────────────────────────────────────────────────────────
@@ -425,9 +417,7 @@ $histStmt = $db->prepare("SELECT * FROM image_history WHERE user_id=? ORDER BY c
 $histStmt->execute([$user['id']]);
 $history = $histStmt->fetchAll();
 
-$limitDisplay = $user['daily_limit'];
-$tokenDisplay = $user['tokens'];
-$totalDisplay = $limitDisplay + $tokenDisplay;
+$limitDisplay = (int)$user['daily_limit'];
 $emailInitial = strtoupper(substr($user['email'], 0, 1));
 ?>
 <!DOCTYPE html>
@@ -450,9 +440,6 @@ $emailInitial = strtoupper(substr($user['email'], 0, 1));
     <div class="limit-badge">
       <div class="dot"></div>
       Bugungi limit: <strong id="nav-limit"><?= $limitDisplay ?></strong>
-      <?php if($tokenDisplay > 0): ?>
-        &nbsp;+&nbsp;<span style="color:var(--neon-purple)"><?= $tokenDisplay ?> token</span>
-      <?php endif; ?>
     </div>
     <div class="avatar-wrap">
       <button class="avatar-btn" onclick="toggleDropdown()" id="avatar-btn"><?= $emailInitial ?></button>
@@ -462,7 +449,7 @@ $emailInitial = strtoupper(substr($user['email'], 0, 1));
           <div class="dropdown-meta">
             Foydalanuvchi ID: <span class="mono"><?= htmlspecialchars($user['user_uid']) ?></span><br/>
             Email: <span><?= htmlspecialchars($user['email']) ?></span><br/>
-            Limit: <span><?= $limitDisplay ?></span> &nbsp;|&nbsp; Token: <span style="color:var(--neon-purple)"><?= $tokenDisplay ?></span>
+            Bugungi limit: <span><?= $limitDisplay ?></span>
           </div>
         </div>
         <?php if($user['email'] === ADMIN_EMAIL): ?>
@@ -662,6 +649,48 @@ function regenerate() {
   document.getElementById('result-area').classList.remove('visible');
   generateImage();
 }
+
+// ─── DEVTOOLS PROTECTION ──────────────────────────────────────────────────
+(function() {
+  // Block right click
+  document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+
+  // Block keyboard shortcuts
+  document.addEventListener('keydown', function(e) {
+    // F12
+    if(e.key === 'F12') { e.preventDefault(); return false; }
+    // Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C
+    if(e.ctrlKey && e.shiftKey && ['I','i','J','j','C','c'].includes(e.key)) { e.preventDefault(); return false; }
+    // Ctrl+U (view source)
+    if(e.ctrlKey && ['U','u'].includes(e.key)) { e.preventDefault(); return false; }
+    // Ctrl+S (save)
+    if(e.ctrlKey && ['S','s'].includes(e.key)) { e.preventDefault(); return false; }
+  });
+
+  // DevTools open detection via size threshold
+  const THRESHOLD = 160;
+  function isDevToolsOpen() {
+    return (window.outerWidth - window.innerWidth > THRESHOLD) ||
+           (window.outerHeight - window.innerHeight > THRESHOLD);
+  }
+
+  function showDevToolsWarning() {
+    document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#020617;flex-direction:column;gap:20px;">'
+      + '<div style="font-size:48px;">🚫</div>'
+      + '<div style="font-family:sans-serif;font-size:1.4rem;font-weight:700;color:#f87171;">DevTools taqiqlangan</div>'
+      + '<div style="font-size:0.9rem;color:#475569;">Bu sahifani tekshirish taqiqlangan.</div>'
+      + '</div>';
+  }
+
+  setInterval(function() {
+    if(isDevToolsOpen()) showDevToolsWarning();
+  }, 1000);
+
+  // Debugger trap
+  setInterval(function() {
+    (function() { /* empty */ })['constructor']('debugger')();
+  }, 3000);
+})();
 </script>
 </body>
 </html>
