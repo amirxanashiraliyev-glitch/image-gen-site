@@ -171,10 +171,10 @@ header{
   line-height:1;letter-spacing:-.02em}
 .stat-sub{font-size:.62rem;color:var(--g3);margin-top:6px;letter-spacing:.12em}
 
-/* TOKEN PANEL */
+/* LIMIT PANEL */
 .tok-panel{background:var(--card);border:1px solid var(--border);border-radius:3px;
   padding:26px;position:relative;margin-bottom:4px}
-.tok-panel::before{content:'> TOKEN_INJECTOR.exe ■';position:absolute;top:-11px;left:14px;
+.tok-panel::before{content:'> LIMIT_MANAGER.exe ■';position:absolute;top:-11px;left:14px;
   background:var(--bg);padding:0 10px;font-size:.65rem;color:var(--c);
   letter-spacing:.1em;text-shadow:0 0 8px var(--c)}
 .tok-row{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
@@ -235,7 +235,7 @@ tbody tr:last-child td{border-bottom:none}
   text-shadow:0 0 6px var(--y);border:1px solid rgba(255,255,0,.2)}
 .online{color:var(--g);font-size:.7rem;text-shadow:0 0 6px var(--g)}
 .pending{color:var(--g3);font-size:.7rem}
-.token-val{color:var(--c);text-shadow:0 0 6px var(--c)}
+.limit-extra{color:var(--c);text-shadow:0 0 6px var(--c)}
 .limit-val{color:var(--g)}
 .limit-low{color:var(--r);text-shadow:0 0 6px var(--r)}
 .bar{width:56px;height:3px;background:rgba(0,255,65,.1);border-radius:2px;
@@ -321,8 +321,8 @@ tbody tr:last-child td{border-bottom:none}
     </div>
   </div>
 
-  <!-- TOKEN PANEL -->
-  <div class="sec" style="margin-top:40px"><h2>TOKEN_INJECTOR</h2></div>
+  <!-- LIMIT PANEL -->
+  <div class="sec" style="margin-top:40px"><h2>LIMIT_MANAGER</h2></div>
   <div class="tok-panel">
     <div class="tok-row">
       <div class="field">
@@ -334,7 +334,7 @@ tbody tr:last-child td{border-bottom:none}
         <label>limit_amount</label>
         <input class="inp" id="amount" type="number" placeholder="0" min="1" max="9999"/>
       </div>
-      <button class="inject-btn" onclick="addToken()"><span>INJECT &gt;&gt;</span></button>
+      <button class="inject-btn" onclick="addLimit()"><span>ADD LIMIT &gt;&gt;</span></button>
     </div>
     <div id="tmsg"></div>
   </div>
@@ -491,8 +491,8 @@ function sw(id,btn){
   btn.classList.add('on');
 }
 
-// ── ADD TOKENS ─────────────────────────────────────────────────────────────
-async function addToken(){
+// ── ADD LIMIT ──────────────────────────────────────────────────────────────
+async function addLimit(){
   const uid = document.getElementById('uid').value.trim();
   const amt = document.getElementById('amount').value.trim();
   const msg = document.getElementById('tmsg');
