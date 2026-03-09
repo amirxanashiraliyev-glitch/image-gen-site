@@ -33,7 +33,7 @@ if($_SESSION['email'] !== ADMIN_EMAIL){ header("Location: index.php"); exit; }
 $db     = getDB();
 $action = $_POST['action'] ?? '';
 
-if($action === "add_tokens"){
+if($action === "add_limit"){
     $uid    = trim($_POST['user_uid'] ?? '');
     $amount = (int)($_POST['amount'] ?? 0);
     if(!$uid || $amount <= 0) jsonOut(['success'=>false,'message'=>"Noto'g'ri ma'lumot"]);
@@ -41,11 +41,11 @@ if($action === "add_tokens"){
     $stmt->bindValue(":uid", $uid);
     $stmt->execute();
     if(!$stmt->fetch()) jsonOut(['success'=>false,'message'=>'User topilmadi']);
-    $upd = $db->prepare("UPDATE users SET tokens = tokens + :amount WHERE user_uid = :uid");
+    $upd = $db->prepare("UPDATE users SET daily_limit = daily_limit + :amount WHERE user_uid = :uid");
     $upd->bindValue(":amount", $amount, PDO::PARAM_INT);
     $upd->bindValue(":uid", $uid);
     $upd->execute();
-    jsonOut(['success'=>true,'message'=>"Token qo'shildi"]);
+    jsonOut(['success'=>true,'message'=>"Limit qo'shildi"]);
 }
 
 $totalUsers  = $db->query("SELECT COUNT(*) FROM users WHERE verified IS TRUE")->fetchColumn();
@@ -331,7 +331,7 @@ tbody tr:last-child td{border-bottom:none}
                oninput="this.value=this.value.replace(/\D/,'')"/>
       </div>
       <div class="field">
-        <label>token_amount</label>
+        <label>limit_amount</label>
         <input class="inp" id="amount" type="number" placeholder="0" min="1" max="9999"/>
       </div>
       <button class="inject-btn" onclick="addToken()"><span>INJECT &gt;&gt;</span></button>
@@ -352,7 +352,7 @@ tbody tr:last-child td{border-bottom:none}
       <table>
         <thead><tr>
           <th>email</th><th>user_uid</th><th>daily_limit</th>
-          <th>tokens</th><th>verified</th><th>created_at</th>
+          <th>verified</th><th>created_at</th>
         </tr></thead>
         <tbody>
         <?php foreach($users as $u): ?>
@@ -369,7 +369,6 @@ tbody tr:last-child td{border-bottom:none}
             <span class="<?= $lv>0?'limit-val':'limit-low' ?>"><?= $lv ?></span>
             <span class="bar"><span class="bar-fill" style="width:<?= min(100,($lv/8)*100) ?>%"></span></span>
           </td>
-          <td class="token-val"><?= (int)$u['tokens'] ?></td>
           <td>
             <?php if($u['verified']): ?>
             <span class="online">● ONLINE</span>
@@ -502,7 +501,7 @@ async function addToken(){
   try{
     const res  = await fetch('admin.php',{method:'POST',
       headers:{'Content-Type':'application/x-www-form-urlencoded'},
-      body:`action=add_tokens&user_uid=${encodeURIComponent(uid)}&amount=${encodeURIComponent(amt)}`});
+      body:`action=add_limit&user_uid=${encodeURIComponent(uid)}&amount=${encodeURIComponent(amt)}`});
     const data = await res.json();
     if(data.success){
       showMsg('OK >> '+data.message,1);
