@@ -380,8 +380,9 @@ if($action === 'save_image') {
         $_SESSION['tokens'] = $u['tokens'] - 1;
     }
 
+    // Save only prompt — image served via generate.php proxy (real URL hidden)
     $db->prepare("INSERT INTO image_history (user_id,user_uid,prompt,image_url) VALUES (?,?,?,?)")
-       ->execute([$u['id'], $u['user_uid'], $prompt, $image_url]);
+       ->execute([$u['id'], $u['user_uid'], $prompt, 'generate.php?prompt=' . urlencode($prompt)]);
 
     $updated = $db->prepare("SELECT daily_limit, tokens FROM users WHERE id=?");
     $updated->execute([$u['id']]);
@@ -543,7 +544,7 @@ $emailInitial = strtoupper(substr($user['email'], 0, 1));
           <?php foreach($history as $item): ?>
           <div class="history-card">
             <img
-              src="<?= htmlspecialchars($item['image_url']) ?>"
+              src="generate.php?prompt=<?= urlencode($item['prompt']) ?>"
               alt="<?= htmlspecialchars(substr($item['prompt'],0,50)) ?>"
               loading="lazy"
               onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'200\'%3E%3Crect fill=\'%231e293b\' width=\'200\' height=\'200\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' fill=\'%23475569\' font-size=\'40\' text-anchor=\'middle\' dy=\'.3em\'%3E🖼%3C/text%3E%3C/svg%3E'"
@@ -552,7 +553,7 @@ $emailInitial = strtoupper(substr($user['email'], 0, 1));
               <div class="history-prompt"><?= htmlspecialchars($item['prompt']) ?></div>
               <div class="history-meta">
                 <div class="history-date"><?= date('d.m.Y H:i', strtotime($item['created_at'])) ?></div>
-                <a href="<?= htmlspecialchars($item['image_url']) ?>" download="ai-rasm.jpg" target="_blank" class="btn btn-ghost btn-sm" title="Yuklab olish">⬇</a>
+                <a href="generate.php?prompt=<?= urlencode($item['prompt']) ?>" download="ai-rasm.jpg" class="btn btn-ghost btn-sm" title="Yuklab olish">⬇</a>
               </div>
             </div>
           </div>
