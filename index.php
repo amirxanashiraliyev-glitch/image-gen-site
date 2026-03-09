@@ -600,7 +600,7 @@ async function generateImage() {
   setLoading(true);
 
   try {
-    const apiUrl = 'https://img-gen.wwiw.uz/?prompt=' + encodeURIComponent(prompt);
+    const apiUrl = 'generate.php?prompt=' + encodeURIComponent(prompt);
     const img = new Image();
 
     img.onload = async function() {
