@@ -1189,3 +1189,376 @@ textarea {
   backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--glass-border);
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   GLOBAL GLASSMORPHISM ENHANCEMENT LAYER
+   Apple-style premium dark glass — appended only, no existing code changed
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Enhanced CSS variables ───────────────────────────────────────────────── */
+:root {
+  --glass-bg:           rgba(255, 255, 255, 0.05);
+  --glass-bg-hover:     rgba(255, 255, 255, 0.08);
+  --glass-bg-strong:    rgba(255, 255, 255, 0.09);
+  --glass-blur:         blur(24px) saturate(160%);
+  --glass-blur-heavy:   blur(40px) saturate(180%);
+  --glass-border-white: rgba(255, 255, 255, 0.10);
+  --glass-border-hover-white: rgba(255, 255, 255, 0.18);
+  --glass-shadow:       0 8px 32px rgba(0,0,0,0.45), 0 1px 0 rgba(255,255,255,0.06) inset;
+  --glass-shadow-lg:    0 20px 60px rgba(0,0,0,0.55), 0 1px 0 rgba(255,255,255,0.07) inset;
+  --glass-shadow-glow:  0 0 0 1px rgba(56,189,248,0.12), 0 20px 60px rgba(0,0,0,0.5);
+  --transition-smooth:  all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --radius-glass:       20px;
+}
+
+/* ── Body — richer layered background ────────────────────────────────────── */
+body {
+  background-image:
+    radial-gradient(ellipse 90% 60% at 10% -5%,  rgba(56,189,248,0.10) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 50% at 90% 100%, rgba(129,140,248,0.09) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 50%  50%, rgba(0,212,255,0.04)  0%, transparent 70%),
+    radial-gradient(ellipse 30% 25% at 75%  20%, rgba(167,139,250,0.06) 0%, transparent 50%);
+}
+
+/* ── Navbar — premium frosted glass ──────────────────────────────────────── */
+.navbar {
+  background: rgba(2, 6, 23, 0.72) !important;
+  backdrop-filter: var(--glass-blur-heavy) !important;
+  -webkit-backdrop-filter: var(--glass-blur-heavy) !important;
+  border-bottom: 1px solid var(--glass-border-white) !important;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.04), 0 4px 24px rgba(0,0,0,0.3);
+}
+
+/* ── Auth card — deep glass panel ────────────────────────────────────────── */
+.auth-card {
+  background: rgba(8, 14, 28, 0.82) !important;
+  backdrop-filter: var(--glass-blur-heavy) !important;
+  -webkit-backdrop-filter: var(--glass-blur-heavy) !important;
+  border: 1px solid var(--glass-border-white) !important;
+  box-shadow: var(--glass-shadow-lg), 0 0 80px rgba(56,189,248,0.05) !important;
+  border-radius: var(--radius-glass) !important;
+  transition: var(--transition-smooth);
+}
+
+.auth-card:hover {
+  border-color: rgba(255,255,255,0.14) !important;
+  box-shadow: var(--glass-shadow-lg), 0 0 100px rgba(56,189,248,0.08) !important;
+}
+
+/* ── Generator card ──────────────────────────────────────────────────────── */
+.generator-card {
+  background: rgba(8, 14, 28, 0.70) !important;
+  backdrop-filter: var(--glass-blur) !important;
+  -webkit-backdrop-filter: var(--glass-blur) !important;
+  border: 1px solid var(--glass-border-white) !important;
+  box-shadow: var(--glass-shadow) !important;
+  border-radius: var(--radius-glass) !important;
+  transition: var(--transition-smooth);
+}
+
+.generator-card:hover,
+.generator-card:focus-within {
+  border-color: rgba(56,189,248,0.22) !important;
+  box-shadow: var(--glass-shadow), 0 0 40px rgba(56,189,248,0.06) !important;
+}
+
+/* ── Prompt textarea ─────────────────────────────────────────────────────── */
+.prompt-textarea {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255,255,255,0.09) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 14px !important;
+  transition: var(--transition-smooth);
+}
+
+.prompt-textarea:focus {
+  background: rgba(255,255,255,0.06) !important;
+  border-color: rgba(56,189,248,0.35) !important;
+  box-shadow: 0 0 0 3px rgba(56,189,248,0.10), 0 0 24px rgba(56,189,248,0.05) !important;
+}
+
+/* ── All form inputs ─────────────────────────────────────────────────────── */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+select {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255,255,255,0.09) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 12px !important;
+  transition: var(--transition-smooth);
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+select:focus {
+  background: rgba(255,255,255,0.07) !important;
+  border-color: rgba(56,189,248,0.38) !important;
+  box-shadow: 0 0 0 3px rgba(56,189,248,0.10), 0 0 20px rgba(56,189,248,0.04) !important;
+}
+
+/* ── History cards ───────────────────────────────────────────────────────── */
+.history-card {
+  background: rgba(8, 14, 28, 0.72) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid var(--glass-border-white) !important;
+  border-radius: var(--radius-glass) !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.35) !important;
+  transition: var(--transition-smooth) !important;
+}
+
+.history-card:hover {
+  background: rgba(12, 20, 38, 0.80) !important;
+  border-color: rgba(56,189,248,0.22) !important;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(56,189,248,0.10) !important;
+  transform: translateY(-6px) !important;
+}
+
+/* ── Stat cards ──────────────────────────────────────────────────────────── */
+.stat-card {
+  background: rgba(8, 14, 28, 0.72) !important;
+  backdrop-filter: var(--glass-blur) !important;
+  -webkit-backdrop-filter: var(--glass-blur) !important;
+  border: 1px solid var(--glass-border-white) !important;
+  box-shadow: var(--glass-shadow) !important;
+  border-radius: var(--radius-glass) !important;
+  transition: var(--transition-smooth);
+}
+
+.stat-card:hover {
+  background: var(--glass-bg-hover) !important;
+  border-color: rgba(255,255,255,0.14) !important;
+  box-shadow: var(--glass-shadow-lg) !important;
+  transform: translateY(-3px);
+}
+
+/* ── Table wrap ──────────────────────────────────────────────────────────── */
+.table-wrap {
+  background: rgba(6, 11, 22, 0.75) !important;
+  backdrop-filter: var(--glass-blur) !important;
+  -webkit-backdrop-filter: var(--glass-blur) !important;
+  border: 1px solid var(--glass-border-white) !important;
+  border-radius: var(--radius-glass) !important;
+  box-shadow: var(--glass-shadow) !important;
+  overflow: hidden;
+}
+
+.data-table thead tr {
+  background: rgba(255,255,255,0.04) !important;
+}
+
+.data-table tbody tr:hover {
+  background: rgba(255,255,255,0.03) !important;
+}
+
+/* ── Token / limit form card ─────────────────────────────────────────────── */
+.token-form-card {
+  background: rgba(8, 14, 28, 0.72) !important;
+  backdrop-filter: var(--glass-blur) !important;
+  -webkit-backdrop-filter: var(--glass-blur) !important;
+  border: 1px solid var(--glass-border-white) !important;
+  border-radius: var(--radius-glass) !important;
+  box-shadow: var(--glass-shadow) !important;
+  transition: var(--transition-smooth);
+}
+
+.token-form-card:hover {
+  border-color: rgba(255,255,255,0.13) !important;
+}
+
+/* ── Profile dropdown ────────────────────────────────────────────────────── */
+.profile-dropdown {
+  background: rgba(6, 11, 22, 0.90) !important;
+  backdrop-filter: var(--glass-blur-heavy) !important;
+  -webkit-backdrop-filter: var(--glass-blur-heavy) !important;
+  border: 1px solid var(--glass-border-white) !important;
+  border-radius: 16px !important;
+  box-shadow: var(--glass-shadow-lg) !important;
+}
+
+/* ── Alert boxes ─────────────────────────────────────────────────────────── */
+.alert {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 12px !important;
+}
+
+/* ── Modal ───────────────────────────────────────────────────────────────── */
+.modal {
+  background: rgba(6, 11, 22, 0.92) !important;
+  backdrop-filter: var(--glass-blur-heavy) !important;
+  -webkit-backdrop-filter: var(--glass-blur-heavy) !important;
+  border: 1px solid var(--glass-border-white) !important;
+  border-radius: var(--radius-glass) !important;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.65), 0 1px 0 rgba(255,255,255,0.07) inset !important;
+}
+
+.modal-overlay {
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+}
+
+/* ── Buttons — glass shimmer layer ──────────────────────────────────────── */
+.btn-ghost {
+  background: rgba(255,255,255,0.04) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.09) !important;
+  border-radius: 12px !important;
+  transition: var(--transition-smooth);
+}
+
+.btn-ghost:hover {
+  background: rgba(255,255,255,0.08) !important;
+  border-color: rgba(56,189,248,0.3) !important;
+  box-shadow: 0 4px 20px rgba(56,189,248,0.10);
+}
+
+.btn-primary,
+.gen-btn {
+  border-radius: 14px !important;
+  transition: var(--transition-smooth) !important;
+}
+
+/* ── Result image wrap ───────────────────────────────────────────────────── */
+.result-img-wrap {
+  background: rgba(8,14,28,0.7) !important;
+  border: 1px solid var(--glass-border-white) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: var(--radius-glass) !important;
+  box-shadow: var(--glass-shadow) !important;
+}
+
+/* ── Result image inner border glow ─────────────────────────────────────── */
+.result-img-wrap::after {
+  border: 1px solid rgba(56,189,248,0.15) !important;
+  border-radius: var(--radius-glass) !important;
+}
+
+/* ── Tabs container ──────────────────────────────────────────────────────── */
+.tabs {
+  background: rgba(255,255,255,0.04) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid var(--glass-border-white) !important;
+  border-radius: 14px !important;
+}
+
+.tab-btn.active {
+  background: rgba(56,189,248,0.10) !important;
+  border-radius: 10px !important;
+}
+
+/* ── Admin nav bar ───────────────────────────────────────────────────────── */
+.admin-nav {
+  background: rgba(2, 6, 23, 0.72) !important;
+  backdrop-filter: var(--glass-blur-heavy) !important;
+  -webkit-backdrop-filter: var(--glass-blur-heavy) !important;
+  border-bottom: 1px solid var(--glass-border-white) !important;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.04), 0 4px 24px rgba(0,0,0,0.3);
+}
+
+/* ── Limit / uid badges ──────────────────────────────────────────────────── */
+.limit-badge {
+  background: rgba(56,189,248,0.07) !important;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(56,189,248,0.15) !important;
+}
+
+.uid-badge, .token-badge {
+  backdrop-filter: blur(8px);
+}
+
+/* ── Code inputs (verification) ──────────────────────────────────────────── */
+.code-input {
+  background: rgba(255,255,255,0.05) !important;
+  backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255,255,255,0.09) !important;
+  transition: var(--transition-smooth) !important;
+}
+
+.code-input:focus {
+  background: rgba(255,255,255,0.08) !important;
+  border-color: rgba(56,189,248,0.4) !important;
+  box-shadow: 0 0 0 3px rgba(56,189,248,0.12) !important;
+}
+
+/* ── Google button ────────────────────────────────────────────────────────── */
+.btn-google {
+  background: rgba(255,255,255,0.05) !important;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.09) !important;
+  border-radius: 12px !important;
+  transition: var(--transition-smooth);
+}
+
+.btn-google:hover {
+  background: rgba(255,255,255,0.09) !important;
+  border-color: rgba(255,255,255,0.16) !important;
+}
+
+/* ── Admin history items ─────────────────────────────────────────────────── */
+.admin-history-item {
+  background: rgba(8, 14, 28, 0.72) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid var(--glass-border-white) !important;
+  border-radius: 16px !important;
+  transition: var(--transition-smooth) !important;
+}
+
+.admin-history-item:hover {
+  border-color: rgba(56,189,248,0.22) !important;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.45) !important;
+  transform: translateY(-3px) !important;
+}
+
+/* ── Scrollbar — premium tint ─────────────────────────────────────────────── */
+::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.09) !important;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(56,189,248,0.3) !important;
+}
+
+/* ── Smooth entrance animations ──────────────────────────────────────────── */
+.auth-card,
+.generator-card,
+.history-card,
+.stat-card,
+.table-wrap,
+.token-form-card,
+.modal {
+  animation: glass-reveal 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+.history-card:nth-child(1) { animation-delay: 0.05s; }
+.history-card:nth-child(2) { animation-delay: 0.10s; }
+.history-card:nth-child(3) { animation-delay: 0.15s; }
+.history-card:nth-child(4) { animation-delay: 0.20s; }
+.history-card:nth-child(5) { animation-delay: 0.25s; }
+.history-card:nth-child(6) { animation-delay: 0.30s; }
+
+.stat-card:nth-child(1) { animation-delay: 0.05s; }
+.stat-card:nth-child(2) { animation-delay: 0.10s; }
+.stat-card:nth-child(3) { animation-delay: 0.15s; }
+
+@keyframes glass-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+    backdrop-filter: blur(0px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
