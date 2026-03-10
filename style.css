@@ -1190,375 +1190,392 @@ textarea {
   border-bottom: 1px solid var(--glass-border);
 }
 
+
 /* ═══════════════════════════════════════════════════════════════════════════
-   GLOBAL GLASSMORPHISM ENHANCEMENT LAYER
-   Apple-style premium dark glass — appended only, no existing code changed
+   ULTRA GLASS + ANIMATED BACKGROUND — COMPLETE REDESIGN LAYER
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* ── Enhanced CSS variables ───────────────────────────────────────────────── */
+/* ── CSS Variables override ───────────────────────────────────────────────── */
 :root {
-  --glass-bg:           rgba(255, 255, 255, 0.05);
-  --glass-bg-hover:     rgba(255, 255, 255, 0.08);
-  --glass-bg-strong:    rgba(255, 255, 255, 0.09);
-  --glass-blur:         blur(24px) saturate(160%);
-  --glass-blur-heavy:   blur(40px) saturate(180%);
-  --glass-border-white: rgba(255, 255, 255, 0.10);
-  --glass-border-hover-white: rgba(255, 255, 255, 0.18);
-  --glass-shadow:       0 8px 32px rgba(0,0,0,0.45), 0 1px 0 rgba(255,255,255,0.06) inset;
-  --glass-shadow-lg:    0 20px 60px rgba(0,0,0,0.55), 0 1px 0 rgba(255,255,255,0.07) inset;
-  --glass-shadow-glow:  0 0 0 1px rgba(56,189,248,0.12), 0 20px 60px rgba(0,0,0,0.5);
-  --transition-smooth:  all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  --radius-glass:       20px;
+  --glass-bg:           rgba(255,255,255,0.06);
+  --glass-bg-hover:     rgba(255,255,255,0.10);
+  --glass-border-w:     rgba(255,255,255,0.12);
+  --glass-border-glow:  rgba(56,189,248,0.30);
+  --glass-blur:         blur(28px) saturate(180%);
+  --glass-blur-heavy:   blur(48px) saturate(200%);
+  --glass-shadow:       0 8px 40px rgba(0,0,0,0.55), 0 1px 0 rgba(255,255,255,0.08) inset;
+  --glass-shadow-lg:    0 24px 72px rgba(0,0,0,0.65), 0 1px 0 rgba(255,255,255,0.10) inset;
+  --t: all 0.35s cubic-bezier(0.4,0,0.2,1);
 }
 
-/* ── Body — richer layered background ────────────────────────────────────── */
+/* ── ANIMATED BACKGROUND — orqa fon ──────────────────────────────────────── */
 body {
+  background: #020617 !important;
+  position: relative;
+}
+
+/* CSS-only animated gradient orbs */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 55% 45% at 10% 15%,  rgba(56,189,248,0.18)  0%, transparent 60%),
+    radial-gradient(ellipse 45% 40% at 90%  80%,  rgba(139,92,246,0.16)  0%, transparent 60%),
+    radial-gradient(ellipse 40% 35% at 80%  10%,  rgba(236,72,153,0.12)  0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 20%  85%,  rgba(16,185,129,0.10)  0%, transparent 55%),
+    radial-gradient(ellipse 35% 30% at 50%  50%,  rgba(249,115,22,0.08)  0%, transparent 50%);
+  animation: bg-shift 18s ease-in-out infinite alternate;
+}
+
+@keyframes bg-shift {
+  0%   {
+    background:
+      radial-gradient(ellipse 55% 45% at 10% 15%,  rgba(56,189,248,0.18)  0%, transparent 60%),
+      radial-gradient(ellipse 45% 40% at 90%  80%,  rgba(139,92,246,0.16)  0%, transparent 60%),
+      radial-gradient(ellipse 40% 35% at 80%  10%,  rgba(236,72,153,0.12)  0%, transparent 55%),
+      radial-gradient(ellipse 50% 40% at 20%  85%,  rgba(16,185,129,0.10)  0%, transparent 55%),
+      radial-gradient(ellipse 35% 30% at 50%  50%,  rgba(249,115,22,0.08)  0%, transparent 50%);
+  }
+  25%  {
+    background:
+      radial-gradient(ellipse 60% 50% at 75% 20%,  rgba(139,92,246,0.20)  0%, transparent 60%),
+      radial-gradient(ellipse 50% 45% at 15% 70%,  rgba(56,189,248,0.15)  0%, transparent 60%),
+      radial-gradient(ellipse 45% 40% at 50%  90%,  rgba(249,115,22,0.13)  0%, transparent 55%),
+      radial-gradient(ellipse 40% 35% at 85%  60%,  rgba(236,72,153,0.11)  0%, transparent 55%),
+      radial-gradient(ellipse 30% 25% at 30%  30%,  rgba(16,185,129,0.12)  0%, transparent 50%);
+  }
+  50%  {
+    background:
+      radial-gradient(ellipse 50% 45% at 50% 80%,  rgba(236,72,153,0.18)  0%, transparent 60%),
+      radial-gradient(ellipse 55% 40% at 20% 30%,  rgba(249,115,22,0.14)  0%, transparent 60%),
+      radial-gradient(ellipse 40% 35% at 90%  50%,  rgba(56,189,248,0.16)  0%, transparent 55%),
+      radial-gradient(ellipse 45% 40% at 60%  10%,  rgba(139,92,246,0.13)  0%, transparent 55%),
+      radial-gradient(ellipse 35% 30% at 10%  90%,  rgba(16,185,129,0.10)  0%, transparent 50%);
+  }
+  75%  {
+    background:
+      radial-gradient(ellipse 55% 50% at 85% 50%,  rgba(16,185,129,0.17)  0%, transparent 60%),
+      radial-gradient(ellipse 45% 40% at 30% 20%,  rgba(236,72,153,0.15)  0%, transparent 60%),
+      radial-gradient(ellipse 50% 45% at 10%  60%,  rgba(139,92,246,0.14)  0%, transparent 55%),
+      radial-gradient(ellipse 40% 35% at 70%  85%,  rgba(56,189,248,0.12)  0%, transparent 55%),
+      radial-gradient(ellipse 30% 25% at 55%  40%,  rgba(249,115,22,0.11)  0%, transparent 50%);
+  }
+  100% {
+    background:
+      radial-gradient(ellipse 50% 45% at 40% 60%,  rgba(249,115,22,0.16)  0%, transparent 60%),
+      radial-gradient(ellipse 55% 50% at 80% 25%,  rgba(56,189,248,0.17)  0%, transparent 60%),
+      radial-gradient(ellipse 45% 40% at 15%  85%,  rgba(139,92,246,0.15)  0%, transparent 55%),
+      radial-gradient(ellipse 40% 35% at 60%  15%,  rgba(16,185,129,0.12)  0%, transparent 55%),
+      radial-gradient(ellipse 35% 30% at 90%  70%,  rgba(236,72,153,0.13)  0%, transparent 50%);
+  }
+}
+
+/* Floating orbs — CSS animatsiya */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
   background-image:
-    radial-gradient(ellipse 90% 60% at 10% -5%,  rgba(56,189,248,0.10) 0%, transparent 55%),
-    radial-gradient(ellipse 70% 50% at 90% 100%, rgba(129,140,248,0.09) 0%, transparent 55%),
-    radial-gradient(ellipse 50% 40% at 50%  50%, rgba(0,212,255,0.04)  0%, transparent 70%),
-    radial-gradient(ellipse 30% 25% at 75%  20%, rgba(167,139,250,0.06) 0%, transparent 50%);
+    radial-gradient(circle 180px at var(--ox1,20%) var(--oy1,30%), rgba(56,189,248,0.12) 0%, transparent 70%),
+    radial-gradient(circle 220px at var(--ox2,70%) var(--oy2,60%), rgba(139,92,246,0.10) 0%, transparent 70%),
+    radial-gradient(circle 150px at var(--ox3,50%) var(--oy3,80%), rgba(236,72,153,0.09) 0%, transparent 70%);
+  animation: orb-float 12s ease-in-out infinite alternate;
 }
 
-/* ── Navbar — premium frosted glass ──────────────────────────────────────── */
-.navbar {
-  background: rgba(2, 6, 23, 0.72) !important;
+@keyframes orb-float {
+  0%   { --ox1:15%; --oy1:25%; --ox2:75%; --oy2:65%; --ox3:45%; --oy3:75%; opacity:.8 }
+  33%  { --ox1:25%; --oy1:55%; --ox2:55%; --oy2:35%; --ox3:70%; --oy3:50%; opacity:1  }
+  66%  { --ox1:60%; --oy1:20%; --ox2:20%; --oy2:70%; --ox3:35%; --oy3:85%; opacity:.9 }
+  100% { --ox1:80%; --oy1:60%; --ox2:40%; --oy2,20%; --ox3:60%; --oy3:30%; opacity:.8 }
+}
+
+/* Ensure content above bg layers */
+.wrap, .main-wrap, .auth-page, .navbar, .admin-nav,
+nav, header, main, section, .container {
+  position: relative;
+  z-index: 2;
+}
+
+/* ── NAVBAR ──────────────────────────────────────────────────────────────── */
+.navbar, .admin-nav {
+  background: rgba(2,6,23,0.55) !important;
   backdrop-filter: var(--glass-blur-heavy) !important;
   -webkit-backdrop-filter: var(--glass-blur-heavy) !important;
-  border-bottom: 1px solid var(--glass-border-white) !important;
-  box-shadow: 0 1px 0 rgba(255,255,255,0.04), 0 4px 24px rgba(0,0,0,0.3);
+  border-bottom: 1px solid rgba(255,255,255,0.10) !important;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.05), 0 8px 32px rgba(0,0,0,0.4) !important;
 }
 
-/* ── Auth card — deep glass panel ────────────────────────────────────────── */
+/* ── AUTH CARD ───────────────────────────────────────────────────────────── */
 .auth-card {
-  background: rgba(8, 14, 28, 0.82) !important;
+  background: rgba(255,255,255,0.07) !important;
   backdrop-filter: var(--glass-blur-heavy) !important;
   -webkit-backdrop-filter: var(--glass-blur-heavy) !important;
-  border: 1px solid var(--glass-border-white) !important;
-  box-shadow: var(--glass-shadow-lg), 0 0 80px rgba(56,189,248,0.05) !important;
-  border-radius: var(--radius-glass) !important;
-  transition: var(--transition-smooth);
+  border: 1px solid rgba(255,255,255,0.14) !important;
+  box-shadow: var(--glass-shadow-lg), 0 0 0 1px rgba(56,189,248,0.08) !important;
+  border-radius: 28px !important;
+  transition: var(--t);
 }
-
 .auth-card:hover {
-  border-color: rgba(255,255,255,0.14) !important;
-  box-shadow: var(--glass-shadow-lg), 0 0 100px rgba(56,189,248,0.08) !important;
+  border-color: rgba(255,255,255,0.20) !important;
+  box-shadow: var(--glass-shadow-lg), 0 0 80px rgba(56,189,248,0.10) !important;
 }
 
-/* ── Generator card ──────────────────────────────────────────────────────── */
+/* ── GENERATOR CARD ──────────────────────────────────────────────────────── */
 .generator-card {
-  background: rgba(8, 14, 28, 0.70) !important;
+  background: rgba(255,255,255,0.06) !important;
   backdrop-filter: var(--glass-blur) !important;
   -webkit-backdrop-filter: var(--glass-blur) !important;
-  border: 1px solid var(--glass-border-white) !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
   box-shadow: var(--glass-shadow) !important;
-  border-radius: var(--radius-glass) !important;
-  transition: var(--transition-smooth);
+  border-radius: 24px !important;
+  transition: var(--t);
 }
-
 .generator-card:hover,
 .generator-card:focus-within {
-  border-color: rgba(56,189,248,0.22) !important;
-  box-shadow: var(--glass-shadow), 0 0 40px rgba(56,189,248,0.06) !important;
+  border-color: rgba(56,189,248,0.28) !important;
+  box-shadow: var(--glass-shadow), 0 0 60px rgba(56,189,248,0.08) !important;
+  background: rgba(255,255,255,0.08) !important;
 }
 
-/* ── Prompt textarea ─────────────────────────────────────────────────────── */
+/* ── PROMPT TEXTAREA ─────────────────────────────────────────────────────── */
 .prompt-textarea {
-  background: rgba(255, 255, 255, 0.04) !important;
-  border: 1px solid rgba(255,255,255,0.09) !important;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border-radius: 14px !important;
-  transition: var(--transition-smooth);
+  background: rgba(255,255,255,0.05) !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  border-radius: 16px !important;
+  backdrop-filter: blur(10px);
+  transition: var(--t);
 }
-
 .prompt-textarea:focus {
-  background: rgba(255,255,255,0.06) !important;
-  border-color: rgba(56,189,248,0.35) !important;
-  box-shadow: 0 0 0 3px rgba(56,189,248,0.10), 0 0 24px rgba(56,189,248,0.05) !important;
+  background: rgba(255,255,255,0.08) !important;
+  border-color: rgba(56,189,248,0.45) !important;
+  box-shadow: 0 0 0 3px rgba(56,189,248,0.12), 0 0 40px rgba(56,189,248,0.08) !important;
 }
 
-/* ── All form inputs ─────────────────────────────────────────────────────── */
+/* ── ALL INPUTS ──────────────────────────────────────────────────────────── */
 input[type="text"],
 input[type="email"],
 input[type="password"],
 input[type="number"],
 select {
-  background: rgba(255, 255, 255, 0.05) !important;
-  border: 1px solid rgba(255,255,255,0.09) !important;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border-radius: 12px !important;
-  transition: var(--transition-smooth);
-}
-
-input[type="text"]:focus,
-input[type="email"]:focus,
-input[type="password"]:focus,
-input[type="number"]:focus,
-select:focus {
-  background: rgba(255,255,255,0.07) !important;
-  border-color: rgba(56,189,248,0.38) !important;
-  box-shadow: 0 0 0 3px rgba(56,189,248,0.10), 0 0 20px rgba(56,189,248,0.04) !important;
-}
-
-/* ── History cards ───────────────────────────────────────────────────────── */
-.history-card {
-  background: rgba(8, 14, 28, 0.72) !important;
-  backdrop-filter: blur(20px) !important;
-  -webkit-backdrop-filter: blur(20px) !important;
-  border: 1px solid var(--glass-border-white) !important;
-  border-radius: var(--radius-glass) !important;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.35) !important;
-  transition: var(--transition-smooth) !important;
-}
-
-.history-card:hover {
-  background: rgba(12, 20, 38, 0.80) !important;
-  border-color: rgba(56,189,248,0.22) !important;
-  box-shadow: 0 16px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(56,189,248,0.10) !important;
-  transform: translateY(-6px) !important;
-}
-
-/* ── Stat cards ──────────────────────────────────────────────────────────── */
-.stat-card {
-  background: rgba(8, 14, 28, 0.72) !important;
-  backdrop-filter: var(--glass-blur) !important;
-  -webkit-backdrop-filter: var(--glass-blur) !important;
-  border: 1px solid var(--glass-border-white) !important;
-  box-shadow: var(--glass-shadow) !important;
-  border-radius: var(--radius-glass) !important;
-  transition: var(--transition-smooth);
-}
-
-.stat-card:hover {
-  background: var(--glass-bg-hover) !important;
-  border-color: rgba(255,255,255,0.14) !important;
-  box-shadow: var(--glass-shadow-lg) !important;
-  transform: translateY(-3px);
-}
-
-/* ── Table wrap ──────────────────────────────────────────────────────────── */
-.table-wrap {
-  background: rgba(6, 11, 22, 0.75) !important;
-  backdrop-filter: var(--glass-blur) !important;
-  -webkit-backdrop-filter: var(--glass-blur) !important;
-  border: 1px solid var(--glass-border-white) !important;
-  border-radius: var(--radius-glass) !important;
-  box-shadow: var(--glass-shadow) !important;
-  overflow: hidden;
-}
-
-.data-table thead tr {
-  background: rgba(255,255,255,0.04) !important;
-}
-
-.data-table tbody tr:hover {
-  background: rgba(255,255,255,0.03) !important;
-}
-
-/* ── Token / limit form card ─────────────────────────────────────────────── */
-.token-form-card {
-  background: rgba(8, 14, 28, 0.72) !important;
-  backdrop-filter: var(--glass-blur) !important;
-  -webkit-backdrop-filter: var(--glass-blur) !important;
-  border: 1px solid var(--glass-border-white) !important;
-  border-radius: var(--radius-glass) !important;
-  box-shadow: var(--glass-shadow) !important;
-  transition: var(--transition-smooth);
-}
-
-.token-form-card:hover {
-  border-color: rgba(255,255,255,0.13) !important;
-}
-
-/* ── Profile dropdown ────────────────────────────────────────────────────── */
-.profile-dropdown {
-  background: rgba(6, 11, 22, 0.90) !important;
-  backdrop-filter: var(--glass-blur-heavy) !important;
-  -webkit-backdrop-filter: var(--glass-blur-heavy) !important;
-  border: 1px solid var(--glass-border-white) !important;
-  border-radius: 16px !important;
-  box-shadow: var(--glass-shadow-lg) !important;
-}
-
-/* ── Alert boxes ─────────────────────────────────────────────────────────── */
-.alert {
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-radius: 12px !important;
-}
-
-/* ── Modal ───────────────────────────────────────────────────────────────── */
-.modal {
-  background: rgba(6, 11, 22, 0.92) !important;
-  backdrop-filter: var(--glass-blur-heavy) !important;
-  -webkit-backdrop-filter: var(--glass-blur-heavy) !important;
-  border: 1px solid var(--glass-border-white) !important;
-  border-radius: var(--radius-glass) !important;
-  box-shadow: 0 40px 100px rgba(0,0,0,0.65), 0 1px 0 rgba(255,255,255,0.07) inset !important;
-}
-
-.modal-overlay {
-  backdrop-filter: blur(10px) !important;
-  -webkit-backdrop-filter: blur(10px) !important;
-}
-
-/* ── Buttons — glass shimmer layer ──────────────────────────────────────── */
-.btn-ghost {
-  background: rgba(255,255,255,0.04) !important;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255,255,255,0.09) !important;
-  border-radius: 12px !important;
-  transition: var(--transition-smooth);
-}
-
-.btn-ghost:hover {
-  background: rgba(255,255,255,0.08) !important;
-  border-color: rgba(56,189,248,0.3) !important;
-  box-shadow: 0 4px 20px rgba(56,189,248,0.10);
-}
-
-.btn-primary,
-.gen-btn {
+  background: rgba(255,255,255,0.06) !important;
+  border: 1px solid rgba(255,255,255,0.11) !important;
   border-radius: 14px !important;
-  transition: var(--transition-smooth) !important;
+  backdrop-filter: blur(10px);
+  transition: var(--t);
+  color: #f1f5f9 !important;
+}
+input:focus, select:focus {
+  background: rgba(255,255,255,0.09) !important;
+  border-color: rgba(56,189,248,0.45) !important;
+  box-shadow: 0 0 0 3px rgba(56,189,248,0.12), 0 0 30px rgba(56,189,248,0.06) !important;
 }
 
-/* ── Result image wrap ───────────────────────────────────────────────────── */
-.result-img-wrap {
-  background: rgba(8,14,28,0.7) !important;
-  border: 1px solid var(--glass-border-white) !important;
+/* ── HISTORY CARDS ───────────────────────────────────────────────────────── */
+.history-card {
+  background: rgba(255,255,255,0.06) !important;
+  backdrop-filter: blur(22px) !important;
+  -webkit-backdrop-filter: blur(22px) !important;
+  border: 1px solid rgba(255,255,255,0.11) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.40) !important;
+  transition: var(--t) !important;
+}
+.history-card:hover {
+  background: rgba(255,255,255,0.10) !important;
+  border-color: rgba(56,189,248,0.30) !important;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.55), 0 0 0 1px rgba(56,189,248,0.12) !important;
+  transform: translateY(-8px) scale(1.02) !important;
+}
+
+/* ── STAT CARDS ──────────────────────────────────────────────────────────── */
+.stat-card {
+  background: rgba(255,255,255,0.06) !important;
+  backdrop-filter: var(--glass-blur) !important;
+  -webkit-backdrop-filter: var(--glass-blur) !important;
+  border: 1px solid rgba(255,255,255,0.11) !important;
+  box-shadow: var(--glass-shadow) !important;
+  border-radius: 20px !important;
+  transition: var(--t);
+}
+.stat-card:hover {
+  background: rgba(255,255,255,0.09) !important;
+  border-color: rgba(255,255,255,0.18) !important;
+  transform: translateY(-4px);
+  box-shadow: var(--glass-shadow-lg) !important;
+}
+
+/* ── TABLE WRAP ──────────────────────────────────────────────────────────── */
+.table-wrap {
+  background: rgba(255,255,255,0.04) !important;
+  backdrop-filter: var(--glass-blur) !important;
+  -webkit-backdrop-filter: var(--glass-blur) !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  border-radius: 20px !important;
+  box-shadow: var(--glass-shadow) !important;
+}
+.data-table thead tr { background: rgba(255,255,255,0.05) !important; }
+.data-table tbody tr:hover { background: rgba(255,255,255,0.04) !important; }
+
+/* ── TOKEN/LIMIT FORM CARD ───────────────────────────────────────────────── */
+.token-form-card {
+  background: rgba(255,255,255,0.06) !important;
+  backdrop-filter: var(--glass-blur) !important;
+  -webkit-backdrop-filter: var(--glass-blur) !important;
+  border: 1px solid rgba(255,255,255,0.11) !important;
+  border-radius: 20px !important;
+  box-shadow: var(--glass-shadow) !important;
+  transition: var(--t);
+}
+.token-form-card:hover { border-color: rgba(255,255,255,0.18) !important; }
+
+/* ── PROFILE DROPDOWN ────────────────────────────────────────────────────── */
+.profile-dropdown {
+  background: rgba(4,8,20,0.75) !important;
+  backdrop-filter: var(--glass-blur-heavy) !important;
+  -webkit-backdrop-filter: var(--glass-blur-heavy) !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  border-radius: 18px !important;
+  box-shadow: var(--glass-shadow-lg) !important;
+}
+
+/* ── MODAL ───────────────────────────────────────────────────────────────── */
+.modal {
+  background: rgba(4,8,20,0.75) !important;
+  backdrop-filter: var(--glass-blur-heavy) !important;
+  -webkit-backdrop-filter: var(--glass-blur-heavy) !important;
+  border: 1px solid rgba(255,255,255,0.13) !important;
+  border-radius: 28px !important;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.7), 0 1px 0 rgba(255,255,255,0.08) inset !important;
+}
+.modal-overlay {
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  background: rgba(2,6,23,0.60) !important;
+}
+
+/* ── ALERTS ──────────────────────────────────────────────────────────────── */
+.alert {
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border-radius: var(--radius-glass) !important;
+  border-radius: 14px !important;
+}
+.alert-error   { background: rgba(248,113,113,0.12) !important; }
+.alert-success { background: rgba(74,222,128,0.10) !important; }
+.alert-info    { background: rgba(56,189,248,0.10) !important; }
+.alert-warning { background: rgba(251,191,36,0.10) !important; }
+
+/* ── BUTTONS ─────────────────────────────────────────────────────────────── */
+.btn-ghost {
+  background: rgba(255,255,255,0.06) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.11) !important;
+  border-radius: 12px !important;
+  transition: var(--t);
+}
+.btn-ghost:hover {
+  background: rgba(255,255,255,0.10) !important;
+  border-color: rgba(56,189,248,0.35) !important;
+  box-shadow: 0 4px 20px rgba(56,189,248,0.12) !important;
+}
+.btn-primary, .gen-btn { border-radius: 14px !important; transition: var(--t) !important; }
+.btn-google {
+  background: rgba(255,255,255,0.06) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.11) !important;
+  border-radius: 14px !important;
+  transition: var(--t);
+}
+.btn-google:hover {
+  background: rgba(255,255,255,0.10) !important;
+  border-color: rgba(255,255,255,0.18) !important;
+}
+
+/* ── RESULT IMAGE WRAP ───────────────────────────────────────────────────── */
+.result-img-wrap {
+  background: rgba(255,255,255,0.05) !important;
+  border: 1px solid rgba(255,255,255,0.11) !important;
+  backdrop-filter: blur(16px);
+  border-radius: 20px !important;
   box-shadow: var(--glass-shadow) !important;
 }
 
-/* ── Result image inner border glow ─────────────────────────────────────── */
-.result-img-wrap::after {
-  border: 1px solid rgba(56,189,248,0.15) !important;
-  border-radius: var(--radius-glass) !important;
-}
-
-/* ── Tabs container ──────────────────────────────────────────────────────── */
+/* ── TABS ────────────────────────────────────────────────────────────────── */
 .tabs {
-  background: rgba(255,255,255,0.04) !important;
-  backdrop-filter: blur(12px) !important;
-  -webkit-backdrop-filter: blur(12px) !important;
-  border: 1px solid var(--glass-border-white) !important;
+  background: rgba(255,255,255,0.05) !important;
+  backdrop-filter: blur(14px) !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
   border-radius: 14px !important;
 }
-
 .tab-btn.active {
-  background: rgba(56,189,248,0.10) !important;
+  background: rgba(56,189,248,0.14) !important;
   border-radius: 10px !important;
 }
 
-/* ── Admin nav bar ───────────────────────────────────────────────────────── */
-.admin-nav {
-  background: rgba(2, 6, 23, 0.72) !important;
-  backdrop-filter: var(--glass-blur-heavy) !important;
-  -webkit-backdrop-filter: var(--glass-blur-heavy) !important;
-  border-bottom: 1px solid var(--glass-border-white) !important;
-  box-shadow: 0 1px 0 rgba(255,255,255,0.04), 0 4px 24px rgba(0,0,0,0.3);
-}
-
-/* ── Limit / uid badges ──────────────────────────────────────────────────── */
-.limit-badge {
-  background: rgba(56,189,248,0.07) !important;
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(56,189,248,0.15) !important;
-}
-
-.uid-badge, .token-badge {
-  backdrop-filter: blur(8px);
-}
-
-/* ── Code inputs (verification) ──────────────────────────────────────────── */
+/* ── CODE INPUTS ─────────────────────────────────────────────────────────── */
 .code-input {
-  background: rgba(255,255,255,0.05) !important;
+  background: rgba(255,255,255,0.07) !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
   backdrop-filter: blur(12px) !important;
-  border: 1px solid rgba(255,255,255,0.09) !important;
-  transition: var(--transition-smooth) !important;
+  transition: var(--t) !important;
 }
-
 .code-input:focus {
-  background: rgba(255,255,255,0.08) !important;
-  border-color: rgba(56,189,248,0.4) !important;
-  box-shadow: 0 0 0 3px rgba(56,189,248,0.12) !important;
+  background: rgba(255,255,255,0.11) !important;
+  border-color: rgba(56,189,248,0.45) !important;
+  box-shadow: 0 0 0 3px rgba(56,189,248,0.14) !important;
 }
 
-/* ── Google button ────────────────────────────────────────────────────────── */
-.btn-google {
-  background: rgba(255,255,255,0.05) !important;
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255,255,255,0.09) !important;
-  border-radius: 12px !important;
-  transition: var(--transition-smooth);
+/* ── LIMIT BADGE ─────────────────────────────────────────────────────────── */
+.limit-badge {
+  background: rgba(56,189,248,0.10) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(56,189,248,0.20) !important;
 }
 
-.btn-google:hover {
-  background: rgba(255,255,255,0.09) !important;
-  border-color: rgba(255,255,255,0.16) !important;
-}
-
-/* ── Admin history items ─────────────────────────────────────────────────── */
+/* ── ADMIN HISTORY ITEMS ─────────────────────────────────────────────────── */
 .admin-history-item {
-  background: rgba(8, 14, 28, 0.72) !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
-  border: 1px solid var(--glass-border-white) !important;
+  background: rgba(255,255,255,0.06) !important;
+  backdrop-filter: blur(18px) !important;
+  border: 1px solid rgba(255,255,255,0.11) !important;
   border-radius: 16px !important;
-  transition: var(--transition-smooth) !important;
+  transition: var(--t) !important;
 }
-
 .admin-history-item:hover {
-  border-color: rgba(56,189,248,0.22) !important;
-  box-shadow: 0 12px 40px rgba(0,0,0,0.45) !important;
-  transform: translateY(-3px) !important;
+  border-color: rgba(56,189,248,0.25) !important;
+  transform: translateY(-4px) !important;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.5) !important;
 }
 
-/* ── Scrollbar — premium tint ─────────────────────────────────────────────── */
-::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.09) !important;
+/* ── SCROLLBAR ───────────────────────────────────────────────────────────── */
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12) !important; }
+::-webkit-scrollbar-thumb:hover { background: rgba(56,189,248,0.35) !important; }
+
+/* ── STAGGERED ENTRANCE ANIMATIONS ──────────────────────────────────────── */
+.auth-card       { animation: glide-up 0.5s cubic-bezier(0.4,0,0.2,1) both; }
+.generator-card  { animation: glide-up 0.5s 0.05s cubic-bezier(0.4,0,0.2,1) both; }
+.stat-card       { animation: glide-up 0.45s cubic-bezier(0.4,0,0.2,1) both; }
+.stat-card:nth-child(2) { animation-delay: 0.08s; }
+.stat-card:nth-child(3) { animation-delay: 0.14s; }
+.history-card    { animation: glide-up 0.4s cubic-bezier(0.4,0,0.2,1) both; }
+.history-card:nth-child(1) { animation-delay:0.05s }
+.history-card:nth-child(2) { animation-delay:0.10s }
+.history-card:nth-child(3) { animation-delay:0.15s }
+.history-card:nth-child(4) { animation-delay:0.20s }
+.history-card:nth-child(5) { animation-delay:0.25s }
+.history-card:nth-child(6) { animation-delay:0.30s }
+
+@keyframes glide-up {
+  from { opacity:0; transform:translateY(20px) scale(0.98); filter:blur(4px); }
+  to   { opacity:1; transform:translateY(0)    scale(1);    filter:blur(0);   }
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(56,189,248,0.3) !important;
-}
-
-/* ── Smooth entrance animations ──────────────────────────────────────────── */
-.auth-card,
-.generator-card,
-.history-card,
-.stat-card,
-.table-wrap,
-.token-form-card,
-.modal {
-  animation: glass-reveal 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
-}
-
-.history-card:nth-child(1) { animation-delay: 0.05s; }
-.history-card:nth-child(2) { animation-delay: 0.10s; }
-.history-card:nth-child(3) { animation-delay: 0.15s; }
-.history-card:nth-child(4) { animation-delay: 0.20s; }
-.history-card:nth-child(5) { animation-delay: 0.25s; }
-.history-card:nth-child(6) { animation-delay: 0.30s; }
-
-.stat-card:nth-child(1) { animation-delay: 0.05s; }
-.stat-card:nth-child(2) { animation-delay: 0.10s; }
-.stat-card:nth-child(3) { animation-delay: 0.15s; }
-
-@keyframes glass-reveal {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-    backdrop-filter: blur(0px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* ── AUTH PAGE extra glow ────────────────────────────────────────────────── */
+.auth-page::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 50%, rgba(56,189,248,0.10) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 50% at 85% 50%, rgba(139,92,246,0.10) 0%, transparent 65%) !important;
 }
