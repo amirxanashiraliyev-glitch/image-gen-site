@@ -48,7 +48,7 @@ if($action === "add_limit"){
     jsonOut(['success'=>true,'message'=>"Limit qo'shildi"]);
 }
 
-$totalUsers  = $db->query("SELECT COUNT(*) FROM users WHERE verified IS TRUE")->fetchColumn();
+$totalUsers  = $db->query("SELECT COUNT(*) FROM users WHERE verified = 1")->fetchColumn();
 $totalImages = $db->query("SELECT COUNT(*) FROM image_history")->fetchColumn();
 $todayImages = $db->query("SELECT COUNT(*) FROM image_history WHERE created_at::date = CURRENT_DATE")->fetchColumn();
 $users       = $db->query("SELECT * FROM users ORDER BY id DESC")->fetchAll();
